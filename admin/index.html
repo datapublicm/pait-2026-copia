@@ -1,150 +1,100 @@
-<!doctype html>
-<html lang="es">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SUNAFIL | SIA PAIT - Gestión de Datos</title>
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SUNAFIL · PAIT 2026 | Gestión de tablas</title>
 <style>
-:root{font-family:Inter,Segoe UI,Arial,sans-serif;color:#172844;background:#f4f7fb}
-*{box-sizing:border-box}body{margin:0}button,select,input{font:inherit}button{cursor:pointer}
-header{background:#102b56;color:white;padding:18px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-.brand{font-size:24px;font-weight:800;letter-spacing:.4px}.brand span{background:#ca1234;border-radius:7px;padding:8px 12px;margin-right:15px;color:white}
-small{color:#718097}.sub{font-size:14px;color:#cdd8ed;margin-top:4px;font-weight:400}
-.shell{display:grid;grid-template-columns:235px minmax(0,1fr);min-height:calc(100vh - 82px)}
-aside{background:white;border-right:1px solid #dde5f0;padding:24px 14px}
-.nav{padding:13px 16px;margin:6px 0;border-radius:9px;color:#475774;cursor:pointer;display:block;border:0;background:transparent;width:100%;text-align:left}
-.nav.active{background:#1e5db5;color:white;font-weight:700}.nav:hover:not(.active){background:#eef3fb}
-main{padding:28px;min-width:0;max-width:1700px;width:100%;margin:auto}
-.title{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-h1{font-size:27px;margin:0 0 7px}h2{font-size:18px;margin:8px 0 16px}
-.tag{display:inline-block;background:#eef4ff;color:#24509a;border:1px solid #d4e3ff;padding:9px 12px;border-radius:8px;font-size:13px}
-.card{background:white;border:1px solid #dfe7f0;border-radius:13px;box-shadow:0 2px 12px #122a5308;padding:20px;margin-top:20px}
-.filters{display:flex;gap:12px;flex-wrap:wrap;align-items:end}
-label{display:flex;flex-direction:column;font-size:13px;font-weight:650;gap:7px;color:#425773}
-select,input{border:1px solid #cbd7e7;border-radius:8px;padding:10px;background:white;min-width:132px;color:#162d51}
-.filter-wide{min-width:240px}button.primary{background:#175cb5;color:white;border:1px solid #175cb5;border-radius:9px;padding:11px 18px;font-weight:650}
-button.secondary{background:white;color:#174b94;border:1px solid #bccce2;border-radius:9px;padding:11px 15px;font-weight:650}
-button:disabled{opacity:.55;cursor:not-allowed}
-.toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:2px 0 18px}
-#count{font-size:14px;color:#61718a}
-.tablewrap{overflow:auto;max-height:62vh;border:1px solid #e4eaf2;border-radius:9px}
-table{border-collapse:collapse;width:100%;font-size:14px;min-width:610px}
-thead{position:sticky;top:0;background:#dceafa;color:#18365e;z-index:1}
-th,td{padding:12px 13px;text-align:left;border-bottom:1px solid #e8edf4;white-space:nowrap}tbody tr:nth-child(even){background:#f8faff}
-footer{font-size:13px;color:#667992;margin:20px 0}
-.note{background:#f0f5fc;border-left:4px solid #276bc2;padding:12px 16px;border-radius:4px;line-height:1.6;margin-top:17px}
-.err{background:#fff0f1;border-left-color:#cd304c;color:#8c1230}
-.summary{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr));gap:13px;margin-top:20px}
-.summary>div{background:white;border:1px solid #dce4ee;border-radius:11px;padding:18px}
-.big{font-size:25px;font-weight:750;margin:7px 0 3px}
-#status{font-size:13px;color:#4b6481}
-.hidden{display:none} .empty{padding:36px;color:#627793;text-align:center}
-@media(max-width:750px){.shell{display:block}aside{display:flex;overflow:auto;padding:10px;gap:6px}.nav{white-space:nowrap;width:auto;margin:0}main{padding:15px}header{padding:15px}.brand{font-size:18px}.summary{grid-template-columns:1fr}.filter-wide{min-width:170px}}
-</style>
-</head>
-<body>
-<header>
- <div class="brand"><span>SUNAFIL</span> SIA PAIT 2026<div class="sub">Gestión de datos · SHSH-Sunafil_Saip</div></div>
- <div class="tag">👁️ Consulta · Solo lectura</div>
-</header>
-<div class="shell">
-<aside aria-label="Navegación">
- <button class="nav active" data-table="avance_mensual">📊 Avance mensual</button>
- <button class="nav" data-table="metas_anuales">🎯 Metas anuales</button>
- <button class="nav" data-table="dependencias">🏢 Dependencias</button>
- <button class="nav" data-table="usuarios">👤 Usuarios</button>
- <button class="nav" data-table="importaciones">📁 Importaciones</button>
-</aside>
-<main>
- <div class="title"><div><h1>Ver tablas</h1><small>Datos originales de 2025 y 2026, sin incluir proyecciones como valores reales.</small></div><span id="status">Conectando a Supabase…</span></div>
- <div class="summary"><div><small>Dependencias</small><div class="big" id="nDep">—</div></div><div><small>Metas 2026</small><div class="big" id="nMetas">—</div></div><div><small>Registros mensuales</small><div class="big" id="nAv">—</div></div></div>
- <section class="card">
-   <div class="filters">
-    <label>Tabla<select id="tabla" class="filter-wide"><option value="avance_mensual">avance_mensual</option><option value="metas_anuales">metas_anuales</option><option value="dependencias">dependencias</option><option value="usuarios">usuarios</option><option value="importaciones">importaciones</option></select></label>
-    <label>Año<select id="anio"><option value="">Todos</option><option value="2025">2025</option><option value="2026" selected>2026</option></select></label>
-    <label>Mes<select id="mes"><option value="">Todos</option></select></label>
-    <label>Dependencia<select id="dependencia" class="filter-wide"><option value="">Todas</option></select></label>
-    <button class="primary" id="refresh">⟳ Actualizar</button>
-   </div>
- </section>
- <section class="card">
-   <div class="toolbar"><div><h2 id="heading">avance_mensual</h2><span id="count">Cargando…</span></div><button class="secondary" id="download">↓ Descargar CSV</button></div>
-   <div class="tablewrap"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table><div class="empty hidden" id="empty"></div></div>
- </section>
- <div class="note" id="info">Las tablas de usuarios e importaciones no son públicas. Las contraseñas nunca se muestran ni se envían al navegador. La edición por clave y la carga de Excel se habilitarán en una etapa posterior.</div>
- <footer>Fuente: Supabase · Esquema SHSH-Sunafil_Saip · Los datos se consultan de nuevo al pulsar Actualizar.</footer>
-</main>
+:root{font-family:Inter,'Segoe UI',Arial,sans-serif;color:#142d53;background:#f6f9fd;font-size:14px}*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button{cursor:pointer;transition:.14s}button:disabled{cursor:not-allowed;opacity:.5}h1,h2,h3,p{margin:0}h1{font-size:28px;letter-spacing:-.6px}h2{font-size:18px}h3{font-size:15px}
+.top{background:linear-gradient(105deg,#172d56,#10294f 70%,#203f71);color:white;padding:13px 30px;display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:75px}.brand{display:flex;align-items:center;gap:22px}.logo{font-size:27px;font-weight:900;letter-spacing:-1px}.brandline{border-left:1px solid #9caec7;padding-left:22px}.brandline strong{font-size:27px;letter-spacing:0}.brandline span{font-size:14px;display:block;color:#d4dff0}.top-right{display:flex;align-items:center;gap:12px}.mode{border:1px solid #557095;background:#34547f;border-radius:8px;padding:12px 14px;font-weight:650;white-space:nowrap}.topbutton{border:1px solid white;border-radius:8px;background:#fff;color:#12346b;padding:12px 17px;font-weight:750;white-space:nowrap}
+.layout{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:calc(100vh - 75px)}aside{background:linear-gradient(#f8fbff,#eef4fa);border-right:1px solid #e0e7f1;padding:25px 9px;display:flex;flex-direction:column;gap:5px}.nav{width:100%;text-align:left;padding:12px;border:0;border-radius:9px;background:transparent;color:#263c62;font-weight:550;display:flex;gap:11px;align-items:center}.nav.active{background:#1e60c4;color:#fff;box-shadow:0 2px 8px #1953ae4a}.nav:not(.active):hover{background:#e5effe}.nav .ico{font-size:19px}.aside-footer{margin-top:auto;border-top:1px solid #cbd8e8;padding:20px 10px;color:#6a7890;font-size:12px;line-height:1.7}
+main{padding:26px 22px;max-width:1780px;width:100%;margin:0 auto}.head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.headtitle{display:flex;gap:13px;align-items:start}.headicon{font-size:31px;color:#1a57a8}.muted{color:#6f819a}.subtitle{margin-top:5px;color:#536782;font-size:13px}.status{background:#f4f7fb;border:1px solid #dbe6f0;color:#57708e;padding:9px 13px;border-radius:8px;font-size:12px}.status.ok{color:#127247;background:#eaf9f0}.status.bad{color:#ad233a;background:#fff0f3}.filters{display:flex;align-items:end;flex-wrap:wrap;gap:13px;margin:22px 0 18px}.field{display:flex;flex-direction:column;gap:7px;font-weight:650;font-size:12px}.field.wide{min-width:260px;flex:0 1 270px}.field select,.field input{width:100%;padding:10px 12px;border:1px solid #ccd8e7;border-radius:7px;background:white;color:#1b3052}.filter-actions{display:flex;align-items:end;gap:9px;margin-left:auto}.btn{border:1px solid transparent;border-radius:7px;padding:10px 13px;font-weight:700;white-space:nowrap}.btn.blue{background:#1464cc;color:white}.btn.green{background:#009858;color:#fff}.btn.red{background:#e94242;color:#fff}.btn.purple{background:#7f45d5;color:#fff}.btn.ghost{background:#fff;border-color:#bed0e8;color:#1e58ad}.btn.dark{background:#1e355e;color:white}.btn.small{padding:7px 9px;font-size:12px}.btn:hover:enabled{filter:brightness(.95)}
+.columns{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;align-items:start}.panel{background:white;border:1px solid #d6e1ef;box-shadow:0 3px 12px #102d5210;border-radius:10px;overflow:hidden}.panelpad{padding:13px}.toolbar{display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:13px}.tabletitle{display:flex;gap:9px;align-items:center;font-size:16px;font-weight:750}.nrows{color:#586f90;font-weight:400;font-size:13px}.tools{display:flex;gap:6px;flex-wrap:wrap}.overflow{max-height:58vh;min-height:215px;overflow:auto}table{border-collapse:collapse;font-size:12px;white-space:nowrap;min-width:100%;width:100%}thead{position:sticky;top:0;z-index:1}th{background:#d7e7fa;color:#173556;padding:11px;text-align:left}td{padding:10px 11px;border-bottom:1px solid #e9eef5}tbody tr:nth-child(even){background:#f8faff}tbody tr.selected{background:#e6f0fe}.cbox{accent-color:#2164ce;width:15px;height:15px}.cellactions{display:flex;gap:5px}.iconbtn{color:#1762c6;background:#f4f8fd;border:1px solid #cadcf1;border-radius:5px;padding:5px 8px}.iconbtn.delete{color:#da3242}.percent{background:#e3f6e7;border-radius:6px;color:#167c34;font-weight:750;padding:5px 9px;display:inline-block;min-width:68px;text-align:center}
+.panelhead{background:linear-gradient(#f6f9fd,#ecf2fa);border-bottom:1px solid #dbe5ee;padding:13px;display:flex;align-items:center;gap:9px;font-weight:800;font-size:15px}.importbody{padding:14px}.opt{display:flex;align-items:flex-start;gap:9px;margin-bottom:16px;color:#273e62}.opt input{margin-top:3px;accent-color:#1e63c0}.opt b{display:block;margin-bottom:5px}.opt small{font-size:12px;line-height:1.35;display:block}.upload{border:2px dashed #c2d2e9;background:#f8fbff;border-radius:9px;min-height:170px;display:flex;align-items:center;justify-content:center;text-align:center;flex-direction:column;gap:10px;padding:18px;cursor:pointer}.upload strong{font-size:28px;color:#168548}.upload small{font-size:12px}.upload.drag{background:#e4f0ff;border-color:#216cd9}.upload:focus{outline:2px solid #276ce0}#file{display:none}.viewonly{background:#fff8e8;border:1px solid #f1dfba;color:#855d18;border-radius:7px;padding:10px;margin-top:13px;font-size:12px;line-height:1.5}.preview{margin-top:12px;font-size:12px;line-height:1.5}.preview pre{max-height:140px;overflow:auto;background:#edf3f9;padding:9px;font-size:11px}.hidden{display:none!important}
+.lower{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:17px 0}.footinfo{border-radius:8px;background:#fff;border:1px solid #d9e3f0;padding:12px 15px;font-size:12px;color:#5d708b}.badges{display:flex;gap:7px;flex-wrap:wrap}.badge{border:1px solid #d6e0ed;background:#f6faff;border-radius:9px;padding:11px 12px;color:#304668;font-weight:600;font-size:12px;cursor:pointer}.badge.active{background:#dae9ff;border-color:#b4cdf4;color:#174c99}.empty{padding:24px;text-align:center;color:#718197}
+.dropdown{position:relative}.dropdownmenu{position:absolute;top:calc(100% + 5px);left:0;min-width:210px;z-index:8;border-radius:8px;border:1px solid #dbe4ed;background:white;box-shadow:0 5px 25px #182d5440;padding:5px}.dropdownmenu button{display:block;text-align:left;background:none;border:none;width:100%;padding:9px 11px;border-radius:5px;color:#264064}.dropdownmenu button:hover{background:#edf5ff}
+.backdrop{position:fixed;inset:0;background:#101e386b;display:flex;align-items:center;justify-content:center;z-index:30;padding:15px}.dialog{background:white;border-radius:14px;box-shadow:0 14px 60px #001d4c55;width:min(95vw,520px);max-height:90vh;overflow:auto;padding:22px}.dialog.wide{width:min(94vw,810px)}.dialoghead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}.dialoghead h2{font-size:20px}.xbtn{border:0;background:transparent;font-size:23px;color:#58718b}.dialogcontent{display:grid;gap:13px}.dialogcontent label{font-size:13px;color:#3d5877;font-weight:650;display:flex;flex-direction:column;gap:7px}.dialogcontent input,.dialogcontent select{border:1px solid #cbd7e8;border-radius:8px;padding:11px;width:100%}.dialogactions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px;flex-wrap:wrap}.notice{border-left:4px solid #e1ab30;background:#fff8e8;padding:11px;border-radius:5px;line-height:1.55;color:#6a5120;font-size:12px}.error{color:#ad2642;font-size:13px}.dialogdata{font-size:13px;color:#4b637e}.checkline{display:flex;flex-direction:row!important;align-items:center;gap:9px}.checkline input{width:auto!important}.divider{height:1px;background:#e2e9f3;margin:3px 0}
+@media(max-width:1150px){.columns{grid-template-columns:1fr}.layout{grid-template-columns:185px 1fr}main{padding:18px}.brandline strong{font-size:21px}.importbody{display:grid;grid-template-columns:1fr 1fr;gap:12px}.upload{min-height:130px}}@media(max-width:730px){.layout{display:block}aside{flex-direction:row;overflow:auto;padding:10px}.aside-footer{display:none}.nav{width:auto;white-space:nowrap}.top{padding:12px}.brandline{padding-left:12px}.logo{font-size:18px}.brandline strong{font-size:17px}.brandline span{font-size:11px}.mode{display:none}.topbutton{padding:9px;font-size:12px}.field.wide{min-width:100%;flex:1}.filters{gap:10px}.filter-actions{margin-left:0}.importbody{display:block}}
+</style></head><body>
+<header class="top"><div class="brand"><div class="logo">◉ SUNAFIL</div><div class="brandline"><strong>PAIT 2026</strong><span>Gestión de datos — SHSH-Sunafil_Saip</span></div></div><div class="top-right"><div class="mode" id="modeLabel">◉ Modo: Solo lectura</div><button id="loginbtn" class="topbutton">♙ Ingresar clave para modificar</button></div></header>
+<div class="layout"><aside>
+<button class="nav" data-nav="inicio"><span class="ico">⌂</span>Inicio</button>
+<button class="nav active" data-nav="tablas"><span class="ico">▤</span>Ver / Gestionar tablas</button>
+<button class="nav" data-nav="excel"><span class="ico">↥</span>Cargar / Reemplazar tabla (Excel)</button>
+<button class="nav" data-nav="dependencias"><span class="ico">▦</span>Dependencias</button>
+<button class="nav" data-nav="metas_anuales"><span class="ico">◎</span>Metas anuales</button>
+<button class="nav" data-nav="avance_mensual"><span class="ico">▥</span>Avance mensual</button>
+<button class="nav" data-nav="usuarios"><span class="ico">♧</span>Usuarios</button>
+<button class="nav" data-nav="importaciones"><span class="ico">◴</span>Historial de importaciones</button>
+<button class="nav" data-nav="ayuda"><span class="ico">ⓘ</span>Ayuda</button>
+<div class="aside-footer">SIA – SUNAFIL<br>Fuente: Supabase<br><span id="updated">Última consulta: —</span></div>
+</aside><main>
+<div class="head"><div class="headtitle"><span class="headicon">▤</span><div><h1 id="title">Gestión de tablas</h1><p class="subtitle">Esquema: SHSH-Sunafil_Saip &nbsp; | &nbsp; Fuente: Supabase &nbsp; | &nbsp; <span id="lastupdate">Consultando…</span></p></div></div><div id="status" class="status">Conectando…</div></div>
+<div class="filters">
+<label class="field wide">Tabla<select id="tableSelect"><option value="avance_mensual">avance_mensual</option><option value="metas_anuales">metas_anuales</option><option value="dependencias">dependencias</option><option value="usuarios">usuarios</option><option value="importaciones">importaciones</option></select></label>
+<div class="dropdown"><button id="managebtn" class="btn blue" aria-expanded="false">⚙ Gestión de la tabla ▾</button><div id="manageMenu" class="dropdownmenu hidden"><button data-manage="structure">▤ Ver estructura (columnas)</button><button data-manage="template">↧ Descargar plantilla (CSV)</button><button data-manage="rename">✎ Cambiar nombre de dependencia</button></div></div>
+<label class="field">Año<select id="year"><option value="">Todos</option><option value="2025">2025</option><option value="2026" selected>2026</option></select></label>
+<label class="field">Mes<select id="month"><option value="">Todos</option></select></label>
+<label class="field">Dependencia<select id="dep"><option value="">Todas</option></select></label>
+<div class="filter-actions"><button id="consult" class="btn blue">⌕ Consultar</button></div>
 </div>
+<div class="columns"><section class="panel"><div class="panelpad"><div class="toolbar"><div class="tabletitle">▤ <span id="tableTitle">avance_mensual</span> <span class="nrows" id="count">—</span></div><div class="tools"><button class="btn green small editing" data-act="add">＋ Agregar registro</button><button class="btn blue small editing" data-act="cell">✎ Editar celda</button><button class="btn blue small editing" data-act="row">⟳ Actualizar fila</button><button class="btn red small editing" data-act="delete">♜ Eliminar</button><button class="btn ghost small" id="export">↧ Exportar CSV</button></div></div><div class="overflow"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table><div id="empty" class="empty hidden"></div></div></div></section>
+<section class="panel"><div class="panelhead">↥ Cargar / Reemplazar tabla</div><div class="importbody"><div><label class="opt"><input type="radio" name="scope" value="all" checked><span><b>Reemplazar toda la tabla</b><small>Solo registros de la tabla seleccionada. Se valida el Excel antes de modificar los datos.</small></span></label><label class="opt"><input type="radio" name="scope" value="year"><span><b>Reemplazar solo un año</b><small>Conserva los registros de los otros años.</small></span></label></div><div><label id="droparea" class="upload" for="file" tabindex="0"><strong>▦</strong><span>Selecciona o arrastra tu archivo Excel</span><small>(.xlsx, .csv)</small><span class="btn blue small" aria-hidden="true">Seleccionar archivo</span></label><input id="file" type="file" accept=".xlsx,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"><div id="preview" class="preview hidden"></div></div><button id="importbtn" class="btn purple editing" style="margin-top:15px;width:100%" disabled>Revisar y reemplazar datos</button><div class="viewonly" id="editHint">La consulta es pública; para editar, eliminar o reemplazar datos se requiere autorización de administrador.</div></div></section></div>
+<div class="lower"><div class="footinfo">▣ &nbsp; Esquema: <b>SHSH-Sunafil_Saip</b> &nbsp; | &nbsp; Fuente: Supabase &nbsp; | &nbsp; <span id="sourceLast">Sin sincronizar</span></div><div class="badges" id="tablebadges"></div></div>
+</main></div>
+<div id="modal" class="backdrop hidden" role="dialog" aria-modal="true"><div class="dialog" id="dialog"><div class="dialoghead"><h2 id="modalTitle"></h2><button id="closemodal" class="xbtn" aria-label="Cerrar">×</button></div><div id="modalBody" class="dialogcontent"></div><p id="modalError" class="error hidden"></p><div id="modalActions" class="dialogactions"></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js" defer></script>
 <script>
 'use strict';
-const BASE='https://jasuqnxrskhqfobsazwd.supabase.co/rest/v1/';
-const KEY='sb_publishable_sQH_z37OD2mzNMoL4M3Lwg_jF8Lpmx2';
-const URLs={avance_mensual:'sia_pait_avance',metas_anuales:'sia_pait_metas',dependencias:'sia_pait_dependencias'};
-const meses=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-const sel=id=>document.getElementById(id),cache={},privateTables=['usuarios','importaciones'];
-let tabla='avance_mensual',shown=[],cols=[];
-function showStatus(t){sel('status').textContent=t}
-function addOption(s,v,t){const o=document.createElement('option');o.value=v;o.textContent=t;s.appendChild(o)}
-function setOptions(){
- const s=sel('dependencia'),value=s.value; s.replaceChildren();addOption(s,'','Todas');
- (cache.dependencias||[]).slice().sort((a,b)=>a.codigo.localeCompare(b.codigo)).forEach(x=>addOption(s,x.codigo,x.codigo));s.value=value;
-}
-async function load(name){
- if(!URLs[name])return [];
- const r=await fetch(BASE+URLs[name]+'?select=*&limit=1000',{headers:{apikey:KEY,Accept:'application/json'},cache:'no-store'});
- if(!r.ok)throw new Error('HTTP '+r.status+' al consultar '+name);
- const data=await r.json();if(!Array.isArray(data))throw new Error('Respuesta incorrecta');
- cache[name]=data;return data;
-}
-function td(text){const e=document.createElement('td');e.textContent=String(text??'');return e}
-function render(){
- tabla=sel('tabla').value;
- document.querySelectorAll('.nav').forEach(x=>x.classList.toggle('active',x.dataset.table===tabla));
- sel('heading').textContent=tabla;
- sel('anio').disabled=tabla==='dependencias'||privateTables.includes(tabla);
- sel('mes').disabled=tabla!=='avance_mensual';
- sel('dependencia').disabled=tabla==='dependencias'||privateTables.includes(tabla);
- sel('download').disabled=privateTables.includes(tabla);
- const year=sel('anio').value,mon=sel('mes').value,dep=sel('dependencia').value;
- shown=(cache[tabla]||[]).filter(r=>(!year||String(r.anio)===year)&&(!mon||String(r.mes)===mon)&&(!dep||r.dependencia===dep));
- cols=tabla==='avance_mensual'?['anio','mes','dependencia','cantidad']:tabla==='metas_anuales'?['anio','dependencia','meta']:tabla==='dependencias'?['codigo','activo']:[];
- const head=document.createElement('tr');
- cols.forEach(c=>{const th=document.createElement('th');th.textContent=({anio:'Año',mes:'Mes',dependencia:'Dependencia',cantidad:'Avance mensual',meta:'Meta anual',codigo:'Dependencia',activo:'Activo'})[c]||c;head.appendChild(th)});
- sel('thead').replaceChildren(head);const body=document.createDocumentFragment();
- shown.forEach(r=>{const tr=document.createElement('tr');cols.forEach(c=>tr.appendChild(td(c==='mes'?meses[r[c]-1]:c==='activo'?(r[c]?'Sí':'No'):r[c])));body.appendChild(tr)});
- sel('tbody').replaceChildren(body);
- sel('count').textContent=shown.length+' registros mostrados';
- const isPriv=privateTables.includes(tabla);sel('empty').classList.toggle('hidden',!!shown.length&&!isPriv);
- sel('empty').textContent=isPriv?'Acceso restringido. No se muestran credenciales, datos de usuarios ni registros internos.':shown.length?'':'Sin registros para estos filtros.';
-}
-async function refresh(){
- showStatus('Consultando…');sel('refresh').disabled=true;
- try{
-  await Promise.all(Object.keys(URLs).map(load));setOptions();
-  sel('nDep').textContent=cache.dependencias.length;
-  sel('nMetas').textContent=(cache.metas_anuales||[]).filter(x=>x.anio===2026).length;
-  sel('nAv').textContent=cache.avance_mensual.length;
-  showStatus('✓ Supabase · conexión activa');
-  sel('info').classList.remove('err');
- }catch(e){
-  showStatus('No se pudo conectar');sel('info').classList.add('err');
-  sel('info').textContent='No fue posible consultar Supabase ('+e.message+'). Comprueba que la API esté activa. No se muestran datos inventados.';
- }finally{sel('refresh').disabled=false;render()}
-}
-function download(){
- if(!shown.length||!cols.length)return;
- const quote=s=>'"'+String(s??'').replaceAll('"','""')+'"';
- const content=[cols.join(','),...shown.map(r=>cols.map(c=>quote(r[c])).join(','))].join('\r\n');
- const blob=new Blob(['\ufeff',content],{type:'text/csv;charset=utf-8'});
- const url=URL.createObjectURL(blob),a=document.createElement('a');
- a.href=url;a.download=tabla+'_'+(sel('anio').value||'todos')+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);
-}
-sel('mes').replaceChildren();addOption(sel('mes'),'','Todos');meses.forEach((m,i)=>addOption(sel('mes'),String(i+1),m));
-sel('tabla').addEventListener('change',render);
-['anio','mes','dependencia'].forEach(id=>sel(id).addEventListener('change',render));
-document.querySelectorAll('.nav').forEach(b=>b.addEventListener('click',()=>{sel('tabla').value=b.dataset.table;render()}));
-sel('refresh').addEventListener('click',refresh);sel('download').addEventListener('click',download);
-refresh();
-</script>
-</body>
-</html>
+const BASE='https://jasuqnxrskhqfobsazwd.supabase.co', KEY='sb_publishable_sQH_z37OD2mzNMoL4M3Lwg_jF8Lpmx2', SCHEMA='SHSH-Sunafil_Saip';
+const VIEW={avance_mensual:'sia_pait_avance',metas_anuales:'sia_pait_metas',dependencias:'sia_pait_dependencias',usuarios:'sia_pait_usuarios',importaciones:'sia_pait_importaciones'};
+const FIELDS={avance_mensual:['anio','mes','dependencia','cantidad'],metas_anuales:['anio','dependencia','meta'],dependencias:['codigo','activo'],usuarios:['usuario','rol','dependencia','activo','clave'],importaciones:['anio','archivo','registros_nuevos','registros_reemplazados','creado_en']};
+const TITLES={anio:'Año',mes:'Mes',dependencia:'Dependencia',cantidad:'Avance mensual',meta_anual:'Meta anual',avance_acumulado:'Avance acumulado',cumplimiento:'% Cumplimiento',meta:'Meta anual',codigo:'Dependencia',activo:'Activo',usuario:'Usuario',rol:'Rol',clave:'Contraseña',archivo:'Archivo',registros_nuevos:'Registros nuevos',registros_reemplazados:'Registros reemplazados',creado_en:'Fecha de importación'};
+const MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const $=id=>document.getElementById(id), E=(tag,txt,cls)=>{const n=document.createElement(tag);if(txt!==undefined)n.textContent=txt;if(cls)n.className=cls;return n};
+let access=null,canEdit=false,current='avance_mensual',lastNav='tablas',source={},visible=[],picked=null,pending=null;
+function toast(text,ok=true){$('status').textContent=text;$('status').className='status '+(ok?'ok':'bad')}
+function addOpt(el,v,t){const o=E('option',t);o.value=v;el.append(o)}
+function authHeaders(json=false){return {'apikey':KEY,'Authorization':'Bearer '+(access?.access_token||KEY),'Accept':'application/json',...(json?{'Content-Type':'application/json'}:{})}}
+async function api(path,opt={}){const r=await fetch(BASE+'/rest/v1/'+path,{...opt,headers:{...authHeaders(!!opt.body),...opt.headers},cache:'no-store'});if(!r.ok){let msg='Error '+r.status;try{const e=await r.json();msg=e.message||e.error_description||msg}catch{}throw Error(msg)}return r.status===204?[]:r.json()}
+function selected(){return visible.find(r=>r._key===picked)}
+function identity(row,t=current){return t==='avance_mensual'?`${row.anio}|${row.mes}|${row.dependencia}`:t==='metas_anuales'?`${row.anio}|${row.dependencia}`:t==='dependencias'?row.codigo:String(row.auth_user_id||row.id)}
+function scoped(){const year=$('year').value,month=$('month').value,dep=$('dep').value;return (source[current]||[]).filter(r=>(!year||!('anio' in r)||String(r.anio)===year)&&(!month||!('mes' in r)||String(r.mes)===month)&&(!dep||!(('dependencia' in r)||('codigo' in r))||(r.dependencia||r.codigo)===dep)).sort((a,b)=>(a.anio||0)-(b.anio||0)||(a.mes||0)-(b.mes||0)||String(a.dependencia||a.codigo||'').localeCompare(String(b.dependencia||b.codigo||''),'es'))}
+function updateControls(){const priv=['usuarios','importaciones'].includes(current),importable=['avance_mensual','metas_anuales'].includes(current);for(const b of document.querySelectorAll('.editing'))b.disabled=!canEdit||priv;for(const b of document.querySelectorAll('[data-act]'))b.disabled=!canEdit||priv||(b.dataset.act!=='add'&&!selected());$('importbtn').disabled=!canEdit||!importable||!pending;$('year').disabled=current==='dependencias'||priv;$('month').disabled=current!=='avance_mensual';$('dep').disabled=current==='dependencias'||priv;$('editHint').textContent=canEdit?'Edición autorizada. Los cambios se guardan en Supabase y quedan reflejados al recargar.':'Modo consulta. Para modificar, eliminar o reemplazar registros debes iniciar sesión con un usuario administrador autorizado.'}
+function render(){current=$('tableSelect').value;document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('active',b.dataset.nav===lastNav));$('tableTitle').textContent=current;let priv=['usuarios','importaciones'].includes(current)&&!canEdit;visible=priv?[]:scoped().map(r=>({...r,_key:identity(r)}));if(!visible.some(r=>r._key===picked))picked=null;
+ if(current==='avance_mensual')for(const r of visible){const m=(source.metas_anuales||[]).find(x=>x.anio===r.anio&&x.dependencia===r.dependencia);r.meta_anual=m?.meta??null;r.avance_acumulado=(source.avance_mensual||[]).filter(x=>x.anio===r.anio&&x.dependencia===r.dependencia&&x.mes<=r.mes).reduce((a,x)=>a+Number(x.cantidad),0);r.cumplimiento=m?.meta>0?(r.avance_acumulado/m.meta*100):null;}
+ const cols=current==='avance_mensual'?['anio','mes','dependencia','meta_anual','cantidad','avance_acumulado','cumplimiento']:(FIELDS[current]||[]),tr=E('tr');tr.append(E('th','☐'));const mon=MONTHS;for(const c of cols){if(c==='clave'&&!canEdit)continue;tr.append(E('th',TITLES[c]||c))}if(!priv&&!['usuarios','importaciones'].includes(current))tr.append(E('th','Acciones'));$('thead').replaceChildren(tr);const body=document.createDocumentFragment();
+ for(const r of visible){const row=E('tr');if(r._key===picked)row.classList.add('selected');const cb=E('input');cb.type='checkbox';cb.className='cbox';cb.checked=r._key===picked;cb.addEventListener('change',()=>{picked=cb.checked?r._key:null;render()});const cell=E('td');cell.append(cb);row.append(cell);
+ for(const c of cols){if(c==='clave'&&!canEdit)continue;let v=r[c]??'';if(c==='mes')v=mon[v-1]||v;if(c==='activo')v=v?'Sí':'No';if(c==='clave')v='••••••••';if(c==='creado_en'&&v)v=new Date(v).toLocaleString('es-PE');if(['cantidad','meta_anual','avance_acumulado'].includes(c)&&v!=='')v=Number(v).toLocaleString('es-PE');let td=E('td');if(c==='cumplimiento'&&r[c]!==null){td.append(E('span',r[c].toFixed(1)+' %','percent'))}else if(c==='cantidad')td.append(E('b',String(v)));else td.textContent=String(v);row.append(td)}
+ if(!['usuarios','importaciones'].includes(current)){const cell=E('td',undefined,'cellactions');for(const [act,txt] of [['row','✎'],['delete','♜']]){const b=E('button',txt,'iconbtn '+(act==='delete'?'delete':''));b.title=act==='row'?'Modificar fila':'Eliminar registro';b.disabled=!canEdit;b.addEventListener('click',()=>{picked=r._key;render();action(act)});cell.append(b)}row.append(cell)}body.append(row)}
+ $('tbody').replaceChildren(body);$('count').textContent=`(${visible.length} registros${priv?' restringidos':''})`;$('empty').textContent=priv?'Acceso restringido: requiere administrador. Las contraseñas no se almacenan en esta tabla.':'No hay registros para los filtros seleccionados.';$('empty').classList.toggle('hidden',visible.length>0);
+ $('tablebadges').replaceChildren(...Object.keys(VIEW).map(t=>{const b=E('button',`▤ ${t} (${source[t]?.length??'—'})`,'badge '+(current===t?'active':''));b.addEventListener('click',()=>switchTable(t));return b}));updateControls()}
+function switchTable(t){$('tableSelect').value=t;current=t;selectedCleanup();render()}
+function selectedCleanup(){picked=null;pending=null;$('preview').classList.add('hidden');$('file').value=''}
+async function load(){try{toast('Consultando Supabase…');const types=canEdit?Object.keys(VIEW):['dependencias','metas_anuales','avance_mensual'];await Promise.all(types.map(async t=>{source[t]=await api(VIEW[t]+'?select=*&limit=1000')}));const d=$('dep'),old=d.value;d.replaceChildren();addOpt(d,'','Todas');(source.dependencias||[]).forEach(x=>addOpt(d,x.codigo,x.codigo));d.value=old;$('updated').textContent='Última consulta: '+new Date().toLocaleString('es-PE');$('lastupdate').textContent='Consultado: '+new Date().toLocaleTimeString('es-PE');$('sourceLast').textContent='Supabase en línea';toast('✓ Conexión activa');render()}catch(e){toast('Error de conexión: '+e.message,false);$('sourceLast').textContent='No se pudo consultar';source={};render()}}
+function modal(title,items=[],buttons=[],wide=false){$('modalTitle').textContent=title;$('modalBody').replaceChildren(...items);$('modalActions').replaceChildren(...buttons);$('modalError').textContent='';$('modalError').classList.add('hidden');$('dialog').classList.toggle('wide',wide);$('modal').classList.remove('hidden')}
+function close(){ $('modal').classList.add('hidden') }
+function dialogError(e){$('modalError').textContent=String(e?.message||e);$('modalError').classList.remove('hidden')}
+function btn(txt,cls,fn){const b=E('button',txt,'btn '+cls);b.addEventListener('click',fn);return b}
+function label(name,type='text',value='',readonly=false){const outer=E('label',name);let i;if(type==='select'){i=E('select');for(const [v,t] of value)addOpt(i,v,t)}else{i=E('input');i.type=type;i.value=String(value??'');i.readOnly=readonly}outer.append(i);return {outer,input:i}}
+function login(){const email=label('Correo de usuario autorizado','email'),pwd=label('Contraseña','password');pwd.input.autocomplete='current-password';email.input.autocomplete='username';const note=E('p','Las credenciales se validan con Supabase Auth. Solo el rol ADMIN puede editar; no se publican ni se almacenan contraseñas en la web.','notice');modal('🔒 Acceso para modificar',[note,email.outer,pwd.outer],[btn('Cancelar','ghost',close),btn('Ingresar','blue',async()=>{try{if(!email.input.value||!pwd.input.value)throw Error('Ingresa usuario y contraseña.');const r=await fetch(BASE+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({email:email.input.value,password:pwd.input.value})});const a=await r.json();if(!r.ok)throw Error(a.msg||a.error_description||'Credenciales incorrectas');access=a;const me=await api(VIEW.usuarios+'?select=usuario,rol,activo&auth_user_id=eq.'+encodeURIComponent(a.user.id));if(!me.some(x=>x.rol==='ADMIN'&&x.activo)){access=null;throw Error('La cuenta no tiene permiso de administrador en PAIT.')}canEdit=true;$('modeLabel').textContent='✎ Modo: Edición habilitada';$('loginbtn').textContent='♧ Cerrar edición';close();await load()}catch(e){dialogError(e)}})])}
+function fieldsForm(record={},initial=false){const fs=[],res={};for(const c of FIELDS[current]){if(['clave','creado_en'].includes(c))continue;const choices=c==='dependencia'?[['','Selecciona dependencia'],...(source.dependencias||[]).map(r=>[r.codigo,r.codigo])]:c==='mes'?MONTHS.map((m,i)=>[i+1,m]):null;let x=c==='activo'?label(TITLES[c],'select',[[true,'Sí'],[false,'No']]):choices?label(TITLES[c],'select',choices):label(TITLES[c],['anio','mes','cantidad','meta'].includes(c)?'number':'text',record[c]??(c==='anio'?2026:'') );if(choices&&record[c]!==undefined)x.input.value=String(record[c]);if(c==='activo')x.input.value=String(record[c]??true);if(x.input.type==='number'){x.input.min=c==='anio'?'2020':c==='mes'?'1':'0';x.input.step='1'}if(c==='codigo'&&!initial)x.input.readOnly=true;res[c]=x.input;fs.push(x.outer)}return {fs,res}}
+function parseFields(o){const data={};for(const [k,i] of Object.entries(o)){if(i.value.trim()==='')throw Error('El campo '+(TITLES[k]||k)+' es obligatorio.');data[k]=['anio','mes','cantidad','meta'].includes(k)?Number(i.value):k==='activo'?i.value==='true':i.value.trim();if(['anio','mes','cantidad','meta'].includes(k)&&(!Number.isSafeInteger(data[k])||data[k]<0))throw Error('Número inválido: '+k)}if(data.mes&&!(data.mes>=1&&data.mes<=12))throw Error('Mes fuera de rango');if(data.anio&&!(data.anio>=2020&&data.anio<=2100))throw Error('Año fuera de rango');return data}
+function path(t,record){return VIEW[t]+'?'+Object.entries(record).filter(([k])=>FIELDS[t].includes(k)).map(([k,v])=>k+'=eq.'+encodeURIComponent(v)).join('&')}
+function keyValue(t,r){return t==='avance_mensual'?{anio:r.anio,mes:r.mes,dependencia:r.dependencia}:t==='metas_anuales'?{anio:r.anio,dependencia:r.dependencia}:{codigo:r.codigo}}
+async function mutation(kind,record,payload){if(!canEdit)throw Error('Acceso de edición no autorizado');const options={method:kind==='add'?'POST':kind==='delete'?'DELETE':'PATCH',headers:{Prefer:'return=representation'}};if(kind!=='delete')options.body=JSON.stringify(kind==='add'?payload:payload);const uri=kind==='add'?VIEW[current]:path(current,keyValue(current,record));const result=await api(uri,options);if(!Array.isArray(result)||result.length!==1)throw Error('No se confirmó la operación en Supabase. Revisa permisos.');return result}
+function action(type){if(!canEdit){login();return}if(['usuarios','importaciones'].includes(current))return;const r=selected();if(type!=='add'&&!r){toast('Selecciona un registro de la tabla',false);return}const original=r?{...r}:null;
+if(type==='delete'){const label=E('p','Eliminar registro: '+identity(r),'dialogdata'),note=E('p','Esta operación requiere confirmación. La eliminación será permanente.','notice');modal('♜ Eliminar registro',[label,note],[btn('Cancelar','ghost',close),btn('Eliminar','red',async()=>{try{await mutation('delete',original);close();picked=null;await load()}catch(e){dialogError(e)}})]);return}
+if(type==='cell'){const mutable=current==='avance_mensual'?'cantidad':current==='metas_anuales'?'meta':'activo';const f=mutable==='activo'?label(TITLES[mutable],'select',[[true,'Sí'],[false,'No']]):label(TITLES[mutable],'number',r[mutable]);if(mutable==='activo')f.input.value=String(r[mutable]);modal('✎ Editar celda',[E('p',identity(r),'dialogdata'),f.outer],[btn('Cancelar','ghost',close),btn('Guardar','blue',async()=>{try{const v=mutable==='activo'?f.input.value==='true':Number(f.input.value);if(mutable!=='activo'&&(!Number.isSafeInteger(v)||v<0))throw Error('Valor inválido');await mutation('update',original,{[mutable]:v});close();await load()}catch(e){dialogError(e)}})]);return}
+const f=fieldsForm(r||{},type==='add');modal(type==='add'?'＋ Agregar nuevo registro':'⟳ Actualizar registro completo',f.fs,[btn('Cancelar','ghost',close),btn(type==='add'?'Agregar':'Actualizar',type==='add'?'green':'blue',async()=>{try{const data=parseFields(f.res);await mutation(type==='add'?'add':'update',original,data);close();await load()}catch(e){dialogError(e)}})])}
+function toCSV(rows,cols){const esc=s=>'"'+String(s??'').replaceAll('"','""')+'"';return '\ufeff'+[cols.map(esc).join(','),...rows.map(r=>cols.map(c=>esc(r[c])).join(','))].join('\r\n')}
+function saveCSV(name,rows,cols){const u=URL.createObjectURL(new Blob([toCSV(rows,cols)],{type:'text/csv;charset=utf-8'}));const a=E('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),4000)}
+function exportCSV(template=false){if(['usuarios','importaciones'].includes(current))return toast('Tabla protegida',false);const cols=FIELDS[current];saveCSV((template?'plantilla_':'datos_')+current+'.csv',template?[]:visible,cols)}
+function structure(){const info=FIELDS[current].map(c=>E('p',(TITLES[c]||c)+' — '+c,'dialogdata'));modal('▤ Estructura: '+current,info,[btn('Cerrar','ghost',close)])}
+function manage(op){$('manageMenu').classList.add('hidden');if(op==='structure')return structure();if(op==='template')return exportCSV(true);if(op==='rename'){if(!canEdit){login();return}switchTable('dependencias');const x=label('Dependencia anterior','select',(source.dependencias||[]).map(x=>[x.codigo,x.codigo])),y=label('Nuevo nombre','text');modal('✎ Cambiar nombre de dependencia',[E('p','Se actualizarán también las metas, los avances y los perfiles vinculados.','notice'),x.outer,y.outer],[btn('Cancelar','ghost',close),btn('Renombrar','blue',async()=>{try{await api('rpc/sia_pait_renombrar_dependencia',{method:'POST',body:JSON.stringify({p_anterior:x.input.value,p_nuevo:y.input.value.trim()})});close();await load()}catch(e){dialogError(e)}})]);return}}
+function parseCSV(s){let out=[],r=[],word='',q=false;for(let i=0;i<s.length;i++){const c=s[i];if(c==='"'){if(q&&s[i+1]==='"'){word+='"';i++}else q=!q}else if(c===','&&!q){r.push(word);word=''}else if((c==='\n'||c==='\r')&&!q){if(c==='\r'&&s[i+1]==='\n')i++;r.push(word);if(r.some(v=>v.trim()))out.push(r);r=[];word=''}else word+=c}if(q)throw Error('CSV con comillas sin cerrar');r.push(word);if(r.some(v=>v.trim()))out.push(r);return out}
+function readGrid(grid){if(!grid.length)throw Error('Archivo vacío');const colnames=grid[0].map(x=>String(x??'').trim().toLowerCase());const needed=FIELDS[current];if(needed.some(c=>!colnames.includes(c)))throw Error('Columnas requeridas: '+needed.join(', '));const result=grid.slice(1).filter(row=>row.some(v=>String(v??'').trim()!=='')).map((row,j)=>{const x={};for(const c of needed){let val=row[colnames.indexOf(c)];if(['anio','mes','cantidad','meta'].includes(c)){val=Number(val);if(!Number.isSafeInteger(val)||val<0)throw Error('Fila '+(j+2)+': '+c+' inválido')}else if(c==='activo')val=String(val).toLowerCase()==='true'||String(val).toLowerCase()==='sí'||String(val)==='1';else val=String(val??'').trim();x[c]=val}if(x.mes&&(x.mes<1||x.mes>12))throw Error('Mes inválido en fila '+(j+2));if(x.anio&&(x.anio<2020||x.anio>2100))throw Error('Año inválido en fila '+(j+2));return x});if(!result.length)throw Error('Archivo sin filas de datos');const ids=result.map(r=>identity(r));if(new Set(ids).size!==ids.length)throw Error('El Excel contiene claves duplicadas');return result}
+async function parseFile(file){if(!['avance_mensual','metas_anuales'].includes(current))throw Error('La importación está habilitada solo para avance_mensual y metas_anuales');if(file.size>6*1024*1024)throw Error('Archivo mayor a 6 MB; divídelo antes de cargar');let grid;if(file.name.toLowerCase().endsWith('.csv'))grid=parseCSV((await file.text()).replace(/^\ufeff/,''));else if(file.name.toLowerCase().endsWith('.xlsx')){if(!window.ExcelJS)throw Error('No se cargó el lector de Excel; intenta nuevamente o utiliza CSV');const wb=new ExcelJS.Workbook();await wb.xlsx.load(await file.arrayBuffer());const sh=wb.worksheets[0];if(!sh)throw Error('Excel sin hojas');grid=sh.getSheetValues().slice(1).filter(Boolean).map(row=>row.slice(1).map(v=>v&&typeof v==='object'?(v.text||v.result||''):v))}else throw Error('Usa archivos CSV o XLSX');return readGrid(grid)}
+function renderPreview(){const div=$('preview');div.replaceChildren();if(!pending){div.classList.add('hidden');return}div.classList.remove('hidden');div.append(E('b',`${pending.rows.length} registros válidos · ${pending.file}`));const box=E('pre',pending.rows.slice(0,3).map(r=>JSON.stringify(r)).join('\n'));div.append(box);updateControls()}
+async function onFile(file){if(!file)return;try{pending={file:file.name,rows:await parseFile(file)};renderPreview();toast('✓ Excel validado: '+pending.rows.length+' filas')}catch(e){pending=null;renderPreview();toast(e.message,false)}}
+function confirmImport(){if(!pending)return;const scope=document.querySelector('input[name="scope"]:checked')?.value||'all',yr=Number($('year').value);if(scope==='year'&&!yr)return toast('Selecciona un año en los filtros',false);if(scope==='year'&&pending.rows.some(x=>x.anio!==yr))return toast('El archivo incluye registros de otros años; revisa el año seleccionado.',false);const info=E('p',`Archivo: ${pending.file} · ${pending.rows.length} registros · Tabla: ${current} · Alcance: ${scope==='all'?'TODA LA TABLA':'Solo '+yr}.`,'dialogdata'),alert=E('p','Se guardará una copia del contenido previo y el reemplazo se realizará en una sola transacción. Si alguna fila falla, no se borrarán los datos existentes.','notice');const ack=label('Escribe REEMPLAZAR para confirmar','text');modal('↥ Confirmar reemplazo de datos',[info,alert,ack.outer],[btn('Cancelar','ghost',close),btn('Reemplazar ahora','red',async()=>{try{if(ack.input.value.trim()!=='REEMPLAZAR')throw Error('Debes escribir REEMPLAZAR para confirmar');if(!canEdit)throw Error('Acceso denegado');const rows=pending.rows.map(r=>Object.fromEntries(FIELDS[current].map(c=>[c,r[c]])));const a=await api('rpc/sia_pait_reemplazar',{method:'POST',body:JSON.stringify({p_tabla:current,p_anio:scope==='year'?yr:null,p_archivo:pending.file,p_datos:rows})});close();selectedCleanup();toast(`✓ Reemplazo completado: ${a} registros`);await load()}catch(e){dialogError(e)}})])}
+function help(){modal('ⓘ Acerca de SIA PAIT',[E('p','Consulta los datos originales del PAIT 2025 y 2026. La cifra mensual es un dato de origen; los indicadores y proyecciones se calculan en el dashboard de Streamlit.','dialogdata'),E('p','La edición requiere cuenta autorizada de Supabase Auth con perfil ADMIN. La carga por Excel permite reemplazar todo o solamente un año, validando antes de escribir.','notice')],[btn('Cerrar','ghost',close)])}
+$('month').replaceChildren();addOpt($('month'),'','Todos');MONTHS.forEach((m,i)=>addOpt($('month'),i+1,m));$('loginbtn').addEventListener('click',()=>{if(canEdit){canEdit=false;access=null;$('modeLabel').textContent='◉ Modo: Solo lectura';$('loginbtn').textContent='♙ Ingresar clave para modificar';load()}else login()});
+$('closemodal').onclick=close;$('modal').addEventListener('click',e=>{if(e.target===$('modal'))close()});$('consult').onclick=load;$('tableSelect').onchange=()=>{lastNav='tablas';selectedCleanup();render()};['year','month','dep'].forEach(id=>$(id).onchange=render);document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{if(b.dataset.nav==='ayuda')return help();if(b.dataset.nav==='excel'){document.querySelector('#droparea').scrollIntoView({behavior:'smooth'});return}if(b.dataset.nav==='inicio'){lastNav='inicio';return switchTable('avance_mensual')}lastNav=b.dataset.nav;switchTable(b.dataset.nav==='tablas'?'avance_mensual':b.dataset.nav)});document.querySelectorAll('[data-act]').forEach(b=>b.onclick=()=>action(b.dataset.act));$('export').onclick=()=>exportCSV(false);$('managebtn').onclick=()=>{$('manageMenu').classList.toggle('hidden');$('managebtn').setAttribute('aria-expanded',!$('manageMenu').classList.contains('hidden'))};document.querySelectorAll('[data-manage]').forEach(b=>b.onclick=()=>manage(b.dataset.manage));$('file').onchange=e=>onFile(e.target.files?.[0]);$('importbtn').onclick=confirmImport;const dz=$('droparea');dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag')});dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');onFile(e.dataTransfer.files[0])});dz.addEventListener('keydown',e=>{if(e.key==='Enter')$('file').click()});load();
+</script></body></html>
